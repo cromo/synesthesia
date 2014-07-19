@@ -1,0 +1,96 @@
+#!/usr/bin/env python
+
+from hashlib import md5
+import re
+import sys
+
+def main(pattern, color_foreground, color_background):
+    for line in sys.stdin:
+        sys.stdout.write(color_pattern_in_string(pattern, line,
+            color_foreground, color_background))
+
+def color_pattern_in_string(pattern, string, foreground, background):
+    return re.sub(pattern, color_match_maker(foreground, background), string)
+
+def color_match_maker(foreground, background):
+    def color_match(match):
+        return color(match.group(), foreground, background)
+    return color_match
+
+def color(string, foreground, background):
+    if not string or not (foreground or background):
+        return string
+    fore_color, back_color = "", ""
+    r, g, b = rgbFrom216Color(int(md5(string).hexdigest(), 16) % 216)
+    br, bg, bb = 5 - r, 5 - g, 5 - b
+    if foreground:
+        fore_color = "\033[38;5;%dm" % (rgbTo216Color(r, g, b) + 16)
+    if background:
+        back_color = "\033[48;5;%dm" % (rgbTo216Color(br, bg, bb) + 16)
+    return "%s%s%s\033[m" % (fore_color, back_color, string)
+
+def rgbFrom216Color(color):
+    return color / 36, color / 6 % 6, color % 6
+
+def rgbTo216Color(r, g, b):
+    return r * 36 + g * 6 + b
+
+def parse_args(args):
+    accepting_flags = True
+    regexes = []
+    options = {
+        'foreground': True,
+        'background': False,
+        'regex': ''
+    }
+    for arg in args:
+        if accepting_flags:
+            if arg in ('-h', '--help'):
+                print_usage()
+                sys.exit(0)
+            if arg in ('-f', '--foreground'):
+                options["foreground"] = True
+            elif arg == '--no-foreground':
+                options["foreground"] = False
+            elif arg in ('-b', '--background'):
+                options["background"] = True
+            elif arg == '--no-background':
+                options["background"] = False
+            elif arg == '--':
+                accepting_flags = False
+            elif arg.startswith('-'):
+                sys.stderr.write("Unrecognized flag: %s\n" % arg)
+                print_usage()
+                sys.exit(1)
+            else:
+                regexes += [arg]
+        else:
+            regexes += [arg]
+    options["regex"] = '|'.join(regexes)
+    return options
+
+def print_usage():
+    sys.stderr.write("""Usage: %s ([flags]|[patterns])... [-- [patterns]...]
+
+Color standard input based on the values matched by the provided regular
+expressions.
+
+Before --, any parameters starting with a dash will be interpreted as flags.
+After it, all parameters are interpreted as patterns.
+
+A pattern is any valid Python regular expression.
+
+Multiples of flags controlling the same option are allowed; the last flag
+specified will take precedence over the ones that come before it.
+
+Flags:
+-b --background     Turn on or off background colorization. (default off)
+   --no-background
+-f --foreground     Turn on or off foreground colorization. (default on)
+   --no-foreground
+-h --help           Print usage information.
+""" % sys.argv[0])
+
+if __name__ == '__main__':
+    options = parse_args(sys.argv)
+    main(options["regex"], options["foreground"], options["background"])
