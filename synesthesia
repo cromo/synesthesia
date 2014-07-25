@@ -5,9 +5,17 @@ import re
 import sys
 
 def main(pattern, color_foreground, color_background):
-    for line in sys.stdin:
+    #for line in sys.stdin:
+    for line in lines(sys.stdin):
         sys.stdout.write(color_pattern_in_string(pattern, line,
             color_foreground, color_background))
+
+def lines(file):
+    while True:
+        line = file.readline()
+        if not line:
+            return
+        yield line
 
 def color_pattern_in_string(pattern, string, foreground, background):
     return re.sub(pattern, color_match_maker(foreground, background), string)
