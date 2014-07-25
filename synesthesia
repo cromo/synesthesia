@@ -101,4 +101,9 @@ Flags:
 
 if __name__ == '__main__':
     options = parse_args(sys.argv)
-    main(options["regex"], options["foreground"], options["background"])
+    try:
+        main(options["regex"], options["foreground"], options["background"])
+    except KeyboardInterrupt:
+        # The user has interrupted the program. Stop it without startling them
+        # with a stack trace.
+        pass
