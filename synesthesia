@@ -74,8 +74,23 @@ def parse_args(args):
                 regexes += [arg]
         else:
             regexes += [arg]
+    validate_regexes(regexes)
     options["regex"] = '|'.join(regexes)
     return options
+
+def validate_regexes(regexes):
+    invalid_regexes = [r for r in regexes if not is_valid_regex(r)]
+    if invalid_regexes:
+        for regex in invalid_regexes:
+            sys.stderr.write("Invalid regex: %s\n" % regex)
+        sys.exit(1)
+
+def is_valid_regex(regex):
+    try:
+        re.compile(regex)
+        return True
+    except re.error:
+        return False
 
 def print_usage():
     sys.stderr.write("""Usage: %s ([flags]|[patterns])... [-- [patterns]...]
