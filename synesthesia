@@ -5,7 +5,6 @@ import re
 import sys
 
 def main(pattern, color_foreground, color_background):
-    #for line in sys.stdin:
     for line in lines(sys.stdin):
         sys.stdout.write(color_pattern_in_string(pattern, line,
             color_foreground, color_background))
