@@ -75,7 +75,7 @@ def parse_args(args):
         else:
             regexes += [arg]
     validate_regexes(regexes)
-    options["regex"] = '|'.join(regexes)
+    options["regex"] = '|'.join(''.join(('(?:', r, ')')) for r in regexes)
     return options
 
 def validate_regexes(regexes):
