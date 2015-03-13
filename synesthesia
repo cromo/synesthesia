@@ -4,6 +4,8 @@ from hashlib import md5
 import re
 import sys
 
+__version__ = "0.1.0"
+
 def main(pattern, color_foreground, color_background):
     for line in lines(sys.stdin):
         sys.stdout.write(color_pattern_in_string(pattern, line,
@@ -54,6 +56,9 @@ def parse_args(args):
         if accepting_flags:
             if arg in ('-h', '--help'):
                 print_usage()
+                sys.exit(0)
+            if arg in ('-v', '--version'):
+                print_version()
                 sys.exit(0)
             if arg in ('-f', '--foreground'):
                 options["foreground"] = True
@@ -112,6 +117,9 @@ Flags:
    --no-foreground
 -h --help           Print usage information.
 """ % sys.argv[0])
+
+def print_version():
+    sys.stdout.write("Synesthesia version %s\n" % __version__)
 
 if __name__ == '__main__':
     options = parse_args(sys.argv[1:])
