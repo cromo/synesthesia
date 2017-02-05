@@ -7,6 +7,8 @@ import (
 	"os"
 	"regexp"
 	"strings"
+
+	"github.com/shiena/ansicolor"
 )
 
 const version = "0.1.0+Go"
@@ -129,12 +131,13 @@ func validateRegexps(regexps []string) {
 
 func interactLinewise(transform func([]byte) []byte) {
 	input := bufio.NewReader(os.Stdin)
+	output := ansicolor.NewAnsiColorWriter(os.Stdout)
 	line, err := input.ReadBytes('\n')
 	for err == nil {
-		fmt.Print(string(transform(line)))
+		fmt.Fprint(output, string(transform(line)))
 		line, err = input.ReadBytes('\n')
 	}
-	fmt.Print(string(transform(line)))
+	fmt.Fprint(output, string(transform(line)))
 }
 
 func colorLineMaker(options options) func([]byte) []byte {
