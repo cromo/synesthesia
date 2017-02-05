@@ -157,7 +157,7 @@ func colorMatchMaker(foreground, background ansiColorer) func([]byte) []byte {
 func color(buf []byte, foreground, background ansiColorer) []byte {
 	sum := md5.Sum(buf)
 	color := int(sum[md5.Size-3])<<16 | int(sum[md5.Size-2])<<8 | int(sum[md5.Size-1])
-	return []byte(fmt.Sprintf("%v%v%v\033[m", foreground(color), background(color), string(buf)))
+	return []byte(fmt.Sprintf("%v%v%v\033[m", foreground(color), background(0xFFFFFF-color), string(buf)))
 }
 
 func colorNoop(color int) string {
