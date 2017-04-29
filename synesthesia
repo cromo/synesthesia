@@ -30,7 +30,7 @@ def color(string, foreground, background):
     if not string or not (foreground or background):
         return string
     fore_color, back_color = "", ""
-    r, g, b = rgbFrom216Color(int(md5(string).hexdigest(), 16) % 216)
+    r, g, b = rgbFrom216Color(int(md5(string.encode('utf-8', 'ignore')).hexdigest(), 16) % 216)
     br, bg, bb = 5 - r, 5 - g, 5 - b
     if foreground:
         fore_color = "\033[38;5;%dm" % (rgbTo216Color(r, g, b) + 16)
