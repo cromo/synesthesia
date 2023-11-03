@@ -8,6 +8,8 @@ Synesthesia takes regular expressions and uses them to colorize stdin.
 Moreover, identical matches are colored with the same color, making it a
 good tool for visualizing large files or streaming data.
 
+![image](https://github.com/cromo/synesthesia/assets/52810/8dd332af-74b4-4bf2-ae5a-24e5ab5ebd37)
+
 ## Installation
 
 At the moment, just put the `synesthesia` script file in your `PATH` and make
